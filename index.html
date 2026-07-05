@@ -3,436 +3,698 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xenio • Panel Administracyjny Premium</title>
+    <title>Xenio • Panel Administracyjny</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --bg-deep: #0a0f1a;
-            --bg-sidebar: #0e1321;
-            --bg-card: rgba(18, 24, 40, 0.8);
-            --border-card: rgba(100, 140, 255, 0.08);
-            --border-glow: rgba(100, 140, 255, 0.2);
-            --text-primary: #e8edf5;
-            --text-secondary: #8899bb;
-            --accent: #6c8cff;
-            --accent-glow: rgba(108, 140, 255, 0.4);
-            --rank-kierownik: #ff6b6b;
-            --rank-admin: #ffb443;
-            --rank-mod: #3dd6a8;
-            --rank-helper: #f7d354;
-            --sidebar-width: 280px;
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-primary: #0a0c14;
+            --bg-secondary: #11141f;
+            --bg-card: #161b26;
+            --border: #1f2533;
+            --border-light: #2a3140;
+            --text: #e3e8f0;
+            --text-secondary: #8b95a8;
+            --text-muted: #5f687b;
+            --accent: #4f8cf7;
+            --color-kierownik: #e74c3c;
+            --color-admin: #f39c12;
+            --color-mod: #2ecc71;
+            --color-helper: #f1c40f;
+            --radius: 16px;
+            --radius-lg: 24px;
+            --radius-sm: 10px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --max-width: 1100px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --neon-blue: #4f8cf7;
+            --neon-red: #e74c3c;
+            --neon-orange: #f39c12;
+            --neon-green: #2ecc71;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg-deep);
-            color: var(--text-primary);
-            display: flex;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
             min-height: 100vh;
-            overflow-x: hidden;
-            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: radial-gradient(ellipse at 50% 0%, rgba(79,140,247,0.05) 0%, transparent 60%), radial-gradient(ellipse at 50% 100%, rgba(231,76,60,0.04) 0%, transparent 60%);
+            background-attachment: fixed;
+            padding-bottom: 40px;
         }
-
-        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-        .bg-animation .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.1; animation: float 15s infinite alternate ease-in-out; }
-        .bg-animation .orb:nth-child(1) { width: 700px; height: 700px; background: var(--accent); top: -250px; left: -250px; animation-duration: 20s; }
-        .bg-animation .orb:nth-child(2) { width: 500px; height: 500px; background: var(--rank-kierownik); bottom: -200px; right: -200px; animation-duration: 22s; }
-        .bg-animation .orb:nth-child(3) { width: 400px; height: 400px; background: var(--rank-admin); top: 60%; left: 50%; animation-duration: 24s; }
-        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, -50px) scale(1.15); } }
-
-        .grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 50px 50px; z-index: -1; pointer-events: none; }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #2a3142; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3d465c; }
+        ::-webkit-scrollbar-thumb { background: #2a3140; border-radius: 10px; }
 
         /* LOGIN */
-        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8,12,22,0.96); backdrop-filter: blur(20px); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 32px; padding: 45px; width: 400px; max-width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.7); text-align: center; }
-        .login-box h2 { margin-bottom: 30px; color: #fff; font-size: 2rem; font-weight: 700; }
-        .login-box input { width: 100%; padding: 16px; margin: 12px 0; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-size: 1rem; outline: none; transition: 0.3s; }
-        .login-box input:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(108,140,255,0.2); }
-        .login-btn { background: linear-gradient(135deg, var(--accent), #4a6cf7); border: none; padding: 16px; width: 100%; border-radius: 16px; color: #fff; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 20px; letter-spacing: 0.5px; }
-        .login-btn:hover { box-shadow: 0 15px 30px rgba(108,140,255,0.4); transform: translateY(-3px); }
-        .login-error { color: var(--rank-kierownik); font-size: 0.9rem; margin-top: 12px; display: none; }
+        .login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(6,8,16,0.97); backdrop-filter: blur(30px); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .login-card {
+            background: var(--bg-secondary); border: 1px solid var(--border-light);
+            border-radius: 32px; padding: 45px 40px; width: 400px; max-width: 92%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6); text-align: center;
+        }
+        .login-icon {
+            width: 56px; height: 56px; background: linear-gradient(135deg, var(--accent), #6366f1);
+            border-radius: 16px; display: inline-flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 1.6rem; color: #fff; margin-bottom: 20px;
+            box-shadow: 0 12px 30px rgba(79,140,247,0.4);
+        }
+        .login-card h2 { margin-bottom: 25px; font-weight: 700; font-size: 1.7rem; color: #fff; letter-spacing: -0.5px; }
+        .login-card input {
+            width: 100%; padding: 14px 16px; margin: 8px 0; border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.04); border: 1.5px solid var(--border); color: #fff;
+            font-size: 0.95rem; outline: none; transition: var(--transition); font-family: 'Inter', sans-serif;
+        }
+        .login-card input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(79,140,247,0.1); }
+        .login-btn {
+            background: linear-gradient(135deg, var(--accent), #6366f1); border: none;
+            padding: 14px; width: 100%; border-radius: var(--radius-sm); color: #fff; font-weight: 700;
+            font-size: 1rem; cursor: pointer; margin-top: 18px; font-family: 'Inter', sans-serif;
+            transition: var(--transition); box-shadow: 0 10px 25px rgba(79,140,247,0.35);
+        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(79,140,247,0.5); }
+        .login-error { color: #e74c3c; font-size: 0.85rem; margin-top: 12px; display: none; font-weight: 500; }
 
-        .app-container { display: flex; width: 100%; min-height: 100vh; }
-        .sidebar { width: var(--sidebar-width); background: var(--bg-sidebar); border-right: 1px solid rgba(255,255,255,0.03); display: flex; flex-direction: column; padding: 35px 22px; position: fixed; height: 100vh; z-index: 100; transition: transform var(--transition); backdrop-filter: blur(15px); box-shadow: 8px 0 25px rgba(0,0,0,0.5); }
-        .sidebar-header { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; padding: 14px 16px; border-radius: 18px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); }
-        .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--accent), #4a6cf7); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.4rem; color: white; box-shadow: 0 10px 25px rgba(108,140,255,0.3); }
-        .logo-text { font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; background: linear-gradient(to right, #ffffff, #a0b0e0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; }
-        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-        .nav-item { padding: 15px 20px; border-radius: 16px; cursor: pointer; color: var(--text-secondary); font-weight: 600; font-size: 0.95rem; transition: all var(--transition); display: flex; align-items: center; gap: 14px; position: relative; border: 1px solid transparent; }
-        .nav-item i { font-size: 1.25rem; width: 24px; text-align: center; transition: var(--transition); }
-        .nav-item:hover { background: rgba(108,140,255,0.04); color: #fff; padding-left: 28px; border-color: rgba(108,140,255,0.1); }
-        .nav-item.active { background: linear-gradient(90deg, rgba(108,140,255,0.15) 0%, transparent 90%); color: #fff; border-color: rgba(108,140,255,0.25); padding-left: 28px; }
-        .nav-item.active i { color: var(--accent); filter: drop-shadow(0 0 8px var(--accent-glow)); }
-        .nav-item.active::before { content: ''; position: absolute; left: 0; top: 25%; height: 50%; width: 4px; background: var(--accent); border-radius: 0 6px 6px 0; box-shadow: 0 0 12px var(--accent); }
-        .sidebar-footer { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
-        .user-info { display: flex; align-items: center; gap: 14px; padding: 14px; background: rgba(0,0,0,0.25); border-radius: 18px; border: 1px solid rgba(255,255,255,0.04); }
-        .status-dot { width: 12px; height: 12px; border-radius: 50%; }
-        .status-dot.online { background: #3dd6a8; box-shadow: 0 0 14px #3dd6a8; animation: pulse 2s infinite; }
-        .status-dot.away { background: #f7d354; box-shadow: 0 0 14px #f7d354; }
-        .status-dot.dnd { background: #ff6b6b; box-shadow: 0 0 14px #ff6b6b; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(61,214,168,0.6); } 70% { box-shadow: 0 0 0 10px rgba(61,214,168,0); } 100% { box-shadow: 0 0 0 0 rgba(61,214,168,0); } }
-        .status-panel { background: rgba(0,0,0,0.35); border-radius: 18px; padding: 14px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 10px; }
-        .status-panel select, .status-panel input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; color: #fff; font-size: 0.85rem; outline: none; width: 100%; }
-        .status-panel button { background: var(--accent); border: none; padding: 10px; border-radius: 12px; color: #fff; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .status-panel button:hover { box-shadow: 0 8px 20px rgba(108,140,255,0.4); }
-        .current-status { font-size: 0.85rem; margin-top: 4px; }
-        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-weight: 600; font-size: 0.75rem; }
-        .status-badge.czuwa { background: rgba(61,214,168,0.15); color: #3dd6a8; }
-        .status-badge.pingi { background: rgba(247,211,84,0.15); color: #f7d354; }
-        .status-badge.niedostepny { background: rgba(255,107,107,0.15); color: #ff6b6b; }
+        /* APP CONTAINER */
+        .app-container { display: none; width: 100%; max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
 
-        .menu-toggle { display: none; position: fixed; top: 20px; left: 20px; z-index: 200; background: var(--bg-sidebar); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; width: 48px; height: 48px; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 1.5rem; backdrop-filter: blur(10px); }
-        .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 60px 70px; width: calc(100% - var(--sidebar-width)); transition: margin var(--transition); }
-        .tab-content { display: none; animation: fadeSlideIn 0.5s ease forwards; }
-        .tab-content.active { display: block; }
-        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+        /* TOP BAR */
+        .topbar {
+            display: flex; align-items: center; justify-content: space-between; padding: 24px 0;
+            border-bottom: 1px solid var(--border); margin-bottom: 28px; flex-wrap: wrap; gap: 16px;
+        }
+        .brand { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; color: #fff; }
+        .brand span { color: var(--accent); }
+        .user-chip {
+            display: flex; align-items: center; gap: 12px; background: var(--bg-card);
+            padding: 8px 20px; border-radius: 40px; border: 1px solid var(--border);
+        }
+        .status-dot {
+            width: 10px; height: 10px; border-radius: 50%; background: #2ecc71;
+            box-shadow: 0 0 12px #2ecc71; animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(46,204,113,0.6); } 50% { box-shadow: 0 0 0 14px rgba(46,204,113,0); } }
+        .user-name { font-weight: 600; font-size: 0.95rem; }
+        .user-role { font-size: 0.75rem; color: var(--text-secondary); }
 
-        .page-header { margin-bottom: 45px; }
-        .page-header h1 { font-size: 3rem; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 10px; background: linear-gradient(to right, #ffffff, #b0c6ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .page-header p { color: var(--text-secondary); font-size: 1.15rem; }
+        /* NAVIGATION */
+        .nav-pills {
+            display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 30px; background: var(--bg-secondary);
+            padding: 6px; border-radius: 40px; border: 1px solid var(--border); justify-content: center;
+        }
+        .nav-pill {
+            padding: 10px 22px; border-radius: 30px; cursor: pointer; color: var(--text-secondary);
+            font-weight: 600; font-size: 0.9rem; transition: var(--transition); border: none;
+            background: transparent; font-family: 'Inter', sans-serif; display: flex;
+            align-items: center; gap: 8px; white-space: nowrap;
+        }
+        .nav-pill i { font-size: 1rem; }
+        .nav-pill:hover { color: #fff; background: rgba(255,255,255,0.03); }
+        .nav-pill.active { background: var(--accent); color: #fff; box-shadow: 0 6px 20px rgba(79,140,247,0.4); }
 
-        .panel-card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 32px; padding: 40px; margin-bottom: 35px; backdrop-filter: blur(25px); box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03); transition: all var(--transition); }
-        .panel-card:hover { border-color: var(--border-glow); box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05); }
-        .panel-card h2 { font-size: 1.7rem; font-weight: 700; margin-bottom: 28px; display: flex; align-items: center; gap: 14px; }
+        /* TABS */
+        .tab-pane { display: none; animation: fadeSlide 0.4s ease; }
+        .tab-pane.active { display: block; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px; margin-top: 35px; }
-        .stat-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border-card); border-radius: 26px; padding: 32px 28px; text-align: center; transition: all var(--transition); cursor: default; }
-        .stat-card:hover { border-color: rgba(108,140,255,0.3); background: rgba(108,140,255,0.03); transform: translateY(-6px); }
-        .stat-card .num { font-size: 2.6rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
-        .stat-card i { font-size: 2.2rem; color: var(--accent); margin-bottom: 10px; }
+        /* CARDS */
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+            padding: 28px 30px; margin-bottom: 20px; box-shadow: var(--shadow); transition: var(--transition);
+        }
+        .card:hover { border-color: var(--border-light); }
+        .card h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; letter-spacing: -0.3px; }
+        .card h2 i { color: var(--accent); }
 
-        .status-list { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
-        .status-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid rgba(255,255,255,0.04); }
-        .status-row .user { display: flex; align-items: center; gap: 12px; font-weight: 600; }
-        .status-row .badge { font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; }
+        /* STATS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .stat-box {
+            background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 24px 20px; text-align: center; transition: var(--transition);
+        }
+        .stat-box:hover { border-color: var(--border-light); transform: translateY(-3px); }
+        .stat-box i { font-size: 1.8rem; color: var(--accent); margin-bottom: 8px; }
+        .stat-value { font-size: 2.4rem; font-weight: 900; color: #fff; letter-spacing: -1px; }
+        .stat-label { color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; }
 
-        .section-title { font-size: 1.05rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; margin: 45px 0 22px; font-weight: 700; display: flex; align-items: center; gap: 14px; }
-        .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0.08), transparent); }
-        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 35px; }
-        .team-center { display: flex; justify-content: center; }
-        .member-card { background: rgba(20,26,44,0.8); border: 1px solid var(--border-card); border-radius: 28px; padding: 40px 24px 28px; text-align: center; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); position: relative; overflow: hidden; backdrop-filter: blur(15px); }
-        .member-card::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at center, rgba(255,255,255,0.04) 0%, transparent 70%); opacity: 0; transition: opacity 0.4s; }
-        .member-card:hover::after { opacity: 1; }
-        .member-card:hover { transform: translateY(-12px); border-color: var(--border-glow); box-shadow: 0 30px 50px rgba(0,0,0,0.6); }
-        .avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin-bottom: 20px; border: 3px solid rgba(255,255,255,0.06); transition: all 0.4s; position: relative; z-index: 1; }
-        .member-card:hover .avatar { transform: scale(1.08); }
-        .member-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; position: relative; z-index: 1; }
-        .role-badge { display: inline-block; padding: 7px 18px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 1; }
-        .card-kierownik .role-badge { background: rgba(255,107,107,0.15); color: var(--rank-kierownik); border: 1px solid rgba(255,107,107,0.3); }
-        .card-kierownik .avatar { border-color: var(--rank-kierownik); box-shadow: 0 0 25px rgba(255,107,107,0.3); }
-        .card-admin .role-badge { background: rgba(255,180,67,0.15); color: var(--rank-admin); border: 1px solid rgba(255,180,67,0.3); }
-        .card-admin .avatar { border-color: var(--rank-admin); box-shadow: 0 0 25px rgba(255,180,67,0.3); }
-        .card-mod .role-badge { background: rgba(61,214,168,0.15); color: var(--rank-mod); border: 1px solid rgba(61,214,168,0.3); }
-        .card-mod .avatar { border-color: var(--rank-mod); box-shadow: 0 0 25px rgba(61,214,168,0.3); }
-        .card-helper .role-badge { background: rgba(247,211,84,0.15); color: var(--rank-helper); border: 1px solid rgba(247,211,84,0.3); }
-        .card-helper .avatar { border-color: var(--rank-helper); box-shadow: 0 0 25px rgba(247,211,84,0.3); }
+        /* STATUS TABLE */
+        .table-status { width: 100%; border-collapse: collapse; }
+        .table-status th { text-align: left; padding: 10px 14px; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+        .table-status td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.02); font-weight: 500; }
+        .dot-online { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; margin-right: 8px; box-shadow: 0 0 8px #2ecc71; }
 
-        .table-container { overflow-x: auto; border-radius: 20px; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-        th { color: var(--text-secondary); font-weight: 700; padding: 18px 22px; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1.2px; cursor: pointer; }
-        td { padding: 20px 22px; background: rgba(255,255,255,0.015); color: #e2e6f0; font-size: 0.95rem; border-top: 1px solid rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.03); }
-        td:first-child { border-left: 1px solid rgba(255,255,255,0.03); border-radius: 14px 0 0 14px; }
-        td:last-child { border-right: 1px solid rgba(255,255,255,0.03); border-radius: 0 14px 14px 0; }
-        tr:hover td { background: rgba(108,140,255,0.04); border-color: rgba(108,140,255,0.1); }
-        .badge-ban { background: rgba(255,107,107,0.2); color: #ff6b6b; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; border: 1px solid rgba(255,107,107,0.3); }
+        /* TEAM */
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; justify-items: center; }
+        .team-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+            padding: 28px 20px; text-align: center; transition: var(--transition); width: 100%;
+            max-width: 260px; box-shadow: var(--shadow);
+        }
+        .team-card:hover { transform: translateY(-6px); box-shadow: 0 20px 45px rgba(0,0,0,0.5); }
+        .team-card img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; margin-bottom: 14px; border: 3px solid transparent; }
+        .team-card.kierownik img { border-color: var(--color-kierownik); box-shadow: 0 0 25px rgba(231,76,60,0.4); }
+        .team-card.admin img { border-color: var(--color-admin); box-shadow: 0 0 25px rgba(243,156,18,0.4); }
+        .team-card.mod img { border-color: var(--color-mod); box-shadow: 0 0 25px rgba(46,204,113,0.4); }
+        .team-card.helper img { border-color: var(--color-helper); box-shadow: 0 0 25px rgba(241,196,15,0.4); }
+        .team-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 6px; }
+        .team-badge { display: inline-block; padding: 5px 14px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .badge-kierownik { background: rgba(231,76,60,0.15); color: var(--color-kierownik); border: 1px solid rgba(231,76,60,0.3); }
+        .badge-admin { background: rgba(243,156,18,0.15); color: var(--color-admin); border: 1px solid rgba(243,156,18,0.3); }
+        .badge-mod { background: rgba(46,204,113,0.15); color: var(--color-mod); border: 1px solid rgba(46,204,113,0.3); }
+        .badge-helper { background: rgba(241,196,15,0.15); color: var(--color-helper); border: 1px solid rgba(241,196,15,0.3); }
+        .section-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2.5px; margin: 30px 0 16px; font-weight: 700; text-align: center; }
+        .flex-center { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
 
-        .info-box { background: linear-gradient(90deg, rgba(247,211,84,0.08) 0%, transparent 100%); border-left: 4px solid var(--rank-helper); padding: 24px 30px; border-radius: 8px 24px 24px 8px; margin-top: 30px; }
-        .critical-box { background: linear-gradient(90deg, rgba(255,107,107,0.1) 0%, transparent 100%); border-left: 4px solid var(--rank-kierownik); padding: 24px 30px; border-radius: 8px 24px 24px 8px; margin-top: 30px; }
+        /* ============ NOWY REGULAMIN 500x LEPSZY ============ */
+        .rules-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .rule-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+        .rule-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 5px;
+            background: var(--accent);
+            box-shadow: 0 0 20px var(--accent);
+            transition: width 0.3s ease, box-shadow 0.3s ease;
+        }
+        .rule-card:nth-child(2)::before {
+            background: var(--neon-orange);
+            box-shadow: 0 0 20px var(--neon-orange);
+        }
+        .rule-card:nth-child(3)::before {
+            background: var(--neon-green);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+        .rule-card.open {
+            border-color: var(--accent);
+            box-shadow: 0 0 35px rgba(79,140,247,0.25);
+        }
+        .rule-card:nth-child(2).open {
+            border-color: var(--neon-orange);
+            box-shadow: 0 0 35px rgba(243,156,18,0.25);
+        }
+        .rule-card:nth-child(3).open {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 35px rgba(46,204,113,0.25);
+        }
+        .rule-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 22px 28px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.3s ease;
+            background: rgba(255,255,255,0.01);
+        }
+        .rule-header:hover {
+            background: rgba(255,255,255,0.03);
+        }
+        .rule-header .icon-circle {
+            width: 48px;
+            height: 48px;
+            background: rgba(79,140,247,0.12);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--accent);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(79,140,247,0.2);
+        }
+        .rule-card:nth-child(2) .icon-circle {
+            background: rgba(243,156,18,0.12);
+            color: var(--neon-orange);
+            box-shadow: 0 0 15px rgba(243,156,18,0.2);
+        }
+        .rule-card:nth-child(3) .icon-circle {
+            background: rgba(46,204,113,0.12);
+            color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(46,204,113,0.2);
+        }
+        .rule-card.open .icon-circle {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 25px currentColor;
+        }
+        .rule-header .title {
+            flex: 1;
+            color: #fff;
+            letter-spacing: -0.3px;
+        }
+        .rule-header .chevron {
+            font-size: 1rem;
+            color: var(--text-muted);
+            transition: transform 0.4s ease;
+        }
+        .rule-card.open .chevron {
+            transform: rotate(180deg);
+            color: var(--accent);
+        }
+        .rule-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.23, 1, 0.32, 1), padding 0.6s ease, background 0.3s ease;
+            padding: 0 28px;
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            background: rgba(0,0,0,0.15);
+            border-top: 1px solid transparent;
+        }
+        .rule-card.open .rule-body {
+            max-height: 800px;
+            padding: 24px 28px;
+            border-top-color: rgba(255,255,255,0.05);
+        }
+        .rules-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .rule-item {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            padding: 12px 18px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .rule-item:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.08);
+            transform: translateX(6px);
+        }
+        .rule-item .par-num {
+            font-weight: 800;
+            font-size: 0.85rem;
+            min-width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(79,140,247,0.15);
+            color: var(--accent);
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(79,140,247,0.3);
+            flex-shrink: 0;
+        }
+        .rule-card:nth-child(2) .rule-item .par-num {
+            background: rgba(243,156,18,0.15);
+            color: var(--neon-orange);
+            box-shadow: 0 0 12px rgba(243,156,18,0.3);
+        }
+        .rule-card:nth-child(3) .rule-item .par-num {
+            background: rgba(46,204,113,0.15);
+            color: var(--neon-green);
+            box-shadow: 0 0 12px rgba(46,204,113,0.3);
+        }
+        .rule-item .content {
+            flex: 1;
+            line-height: 1.5;
+        }
+        .rule-item .content strong {
+            color: #fff;
+            font-weight: 600;
+        }
+        .info-note {
+            background: rgba(79,140,247,0.04);
+            border-left: 4px solid var(--accent);
+            padding: 18px 24px;
+            border-radius: 0 14px 14px 0;
+            margin-top: 24px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .info-note i {
+            color: var(--accent);
+            margin-right: 8px;
+        }
 
-        .ob-section-title { font-size: 1.3rem; font-weight: 700; color: #fff; margin: 50px 0 22px; display: flex; align-items: center; gap: 14px; text-transform: uppercase; letter-spacing: 2px; }
-        .ob-section-title i { color: var(--accent); font-size: 1.5rem; }
-        .fundamenty-card { background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.2) 100%); border: 1px solid rgba(255,255,255,0.04); }
-        .fundamenty-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; }
-        .fundament-item { display: flex; gap: 18px; align-items: flex-start; padding: 12px; border-radius: 18px; transition: background 0.3s; }
-        .fundament-item:hover { background: rgba(255,255,255,0.02); }
-        .fundament-num { font-size: 2.2rem; font-weight: 800; color: var(--accent); opacity: 0.6; line-height: 1; min-width: 55px; }
-        .fundament-text strong { display: block; font-size: 1.05rem; margin-bottom: 6px; color: #fff; }
-        .fundament-text p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; }
+        /* TARYFIKATOR (pozostawiam styl z poprzedniej wersji, nie zmieniam) */
+        .tariff-container { display: flex; flex-direction: column; gap: 30px; }
+        .tariff-category { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 24px 20px; box-shadow: var(--shadow); transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .tariff-category::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent); border-radius: 4px 0 0 4px; box-shadow: 0 0 15px var(--accent); }
+        .tariff-category:nth-child(2)::before { background: var(--neon-orange); box-shadow: 0 0 15px var(--neon-orange); }
+        .tariff-category:nth-child(3)::before { background: var(--neon-red); box-shadow: 0 0 15px var(--neon-red); }
+        .category-title { display: flex; align-items: center; gap: 12px; font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .category-title i { font-size: 1.4rem; width: 36px; height: 36px; background: rgba(79,140,247,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent); }
+        .tariff-category:nth-child(2) .category-title i { background: rgba(243,156,18,0.15); color: var(--neon-orange); }
+        .tariff-category:nth-child(3) .category-title i { background: rgba(231,76,60,0.15); color: var(--neon-red); }
+        .offense-grid { display: flex; flex-direction: column; gap: 12px; }
+        .offense-item { display: flex; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 14px 18px; transition: all 0.2s ease; gap: 20px; flex-wrap: wrap; }
+        .offense-item:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); transform: translateX(4px); }
+        .offense-name { flex: 1; min-width: 180px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 10px; }
+        .offense-name .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+        .tariff-category:nth-child(2) .offense-name .dot { background: var(--neon-orange); box-shadow: 0 0 8px var(--neon-orange); }
+        .tariff-category:nth-child(3) .offense-name .dot { background: var(--neon-red); box-shadow: 0 0 8px var(--neon-red); }
+        .penalty-progress { display: flex; align-items: center; gap: 8px; flex: 2; min-width: 280px; }
+        .penalty-step { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; position: relative; }
+        .penalty-step .step-badge { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 6px 12px; font-size: 0.75rem; font-weight: 700; color: #fff; white-space: nowrap; transition: all 0.2s ease; text-shadow: 0 0 5px rgba(255,255,255,0.3); }
+        .penalty-step .step-badge.ban { background: rgba(231,76,60,0.2); border-color: rgba(231,76,60,0.3); color: #e74c3c; box-shadow: 0 0 15px rgba(231,76,60,0.3); animation: pulse-ban 1.5s infinite; }
+        .penalty-step .step-badge.severe { background: rgba(243,156,18,0.2); border-color: rgba(243,156,18,0.3); color: #f39c12; box-shadow: 0 0 15px rgba(243,156,18,0.3); }
+        @keyframes pulse-ban { 0% { box-shadow: 0 0 5px rgba(231,76,60,0.3); } 50% { box-shadow: 0 0 20px rgba(231,76,60,0.6); } 100% { box-shadow: 0 0 5px rgba(231,76,60,0.3); } }
+        .step-connector { width: 20px; height: 2px; background: rgba(255,255,255,0.1); margin: 0 2px; align-self: center; }
+        .step-label { font-size: 0.65rem; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .alert-box { background: rgba(231,76,60,0.06); border-left: 3px solid #e74c3c; padding: 16px 20px; border-radius: 0 12px 12px 0; margin-top: 24px; font-size: 0.85rem; color: #e74c3c; font-weight: 600; display: flex; align-items: center; gap: 10px; }
 
-        .standards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 25px; }
-        .standard-card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 28px; overflow: hidden; backdrop-filter: blur(20px); transition: all 0.3s ease; cursor: pointer; }
-        .standard-card:hover { border-color: var(--border-glow); box-shadow: 0 20px 35px rgba(0,0,0,0.5); }
-        .standard-header { display: flex; align-items: center; gap: 18px; padding: 26px; user-select: none; }
-        .standard-icon { width: 55px; height: 55px; background: rgba(108,140,255,0.1); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--accent); transition: 0.3s; }
-        .standard-card.expanded .standard-icon { background: rgba(108,140,255,0.2); box-shadow: 0 0 20px rgba(108,140,255,0.3); }
-        .standard-title { font-weight: 700; font-size: 1.15rem; color: #fff; flex: 1; }
-        .standard-arrow { color: var(--text-secondary); transition: transform 0.3s; }
-        .standard-card.expanded .standard-arrow { transform: rotate(180deg); color: var(--accent); }
-        .standard-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; padding: 0 26px; color: var(--text-secondary); }
-        .standard-card.expanded .standard-body { max-height: 600px; padding: 0 26px 26px; }
-        .standard-body ul { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-        .standard-body li span { font-weight: 700; color: #e0e3ec; }
+        /* OBOWIĄZKI */
+        .ob-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+        .ob-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; transition: var(--transition); }
+        .ob-card h3 { font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; font-size: 1rem; }
+        .ob-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .ob-list li { display: flex; gap: 10px; align-items: flex-start; color: var(--text-secondary); font-size: 0.88rem; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .ob-num { font-weight: 800; color: var(--accent); min-width: 30px; font-size: 0.8rem; background: rgba(79,140,247,0.1); border-radius: 6px; text-align: center; padding: 2px 8px; height: fit-content; }
+        .ob-list li strong { color: #fff; font-weight: 600; }
 
-        .role-switcher { display: flex; gap: 18px; margin-bottom: 35px; }
-        .role-btn { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); padding: 16px 35px; border-radius: 18px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
-        .role-btn i { font-size: 1.2rem; }
-        .role-btn:hover { background: rgba(255,255,255,0.05); color: #fff; border-color: rgba(255,255,255,0.15); }
-        .role-btn.active { background: linear-gradient(135deg, rgba(108,140,255,0.25), rgba(108,140,255,0.05)); border-color: rgba(108,140,255,0.5); color: #fff; box-shadow: 0 6px 20px rgba(108,140,255,0.2); }
-        .role-content { animation: fadeSlideIn 0.4s ease; }
-        .role-card h2 { margin-bottom: 28px; }
-        .role-list { display: flex; flex-direction: column; gap: 18px; }
-        .role-item { display: flex; gap: 18px; align-items: baseline; padding: 14px 18px; border-radius: 16px; background: rgba(255,255,255,0.015); border: 1px solid transparent; transition: all 0.3s; color: #d1d5db; }
-        .role-item:hover { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.06); }
-        .role-item span { font-weight: 800; color: var(--accent); font-size: 0.95rem; min-width: 30px; text-align: center; background: rgba(108,140,255,0.1); border-radius: 10px; padding: 3px 10px; }
-        .role-item.highlight { background: rgba(255,180,67,0.08); border-left: 3px solid var(--rank-admin); }
-        .role-item.highlight span { background: rgba(255,180,67,0.2); color: var(--rank-admin); }
-
-        @media (max-width: 1100px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0); }
-            .menu-toggle { display: flex; }
-            .main-content { margin-left: 0; width: 100%; padding: 35px 25px; }
+        @media (max-width: 700px) {
+            .nav-pill { padding: 8px 14px; font-size: 0.78rem; gap: 5px; }
+            .card { padding: 20px 16px; }
+            .topbar { flex-direction: column; align-items: flex-start; }
+            .offense-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .penalty-progress { width: 100%; justify-content: space-between; }
+            .step-connector { display: none; }
         }
     </style>
 </head>
 <body>
-<div class="bg-animation"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
-<div class="grid-overlay"></div>
 
-<div class="login-overlay" id="loginOverlay">
-    <div class="login-box">
-        <h2>🔐 Zaloguj się</h2>
-        <input type="text" id="loginUser" placeholder="Nick" autocomplete="off">
-        <input type="password" id="loginPass" placeholder="Hasło">
-        <button class="login-btn" onclick="login()">Zaloguj się</button>
-        <p class="login-error" id="loginError">Nieprawidłowy nick lub hasło</p>
+    <!-- LOGIN -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-card">
+            <div class="login-icon">X</div>
+            <h2>Zaloguj się</h2>
+            <input type="text" id="loginUser" placeholder="Nick" autocomplete="off">
+            <input type="password" id="loginPass" placeholder="Hasło">
+            <button class="login-btn" onclick="login()">Zaloguj się</button>
+            <p class="login-error" id="loginError">Nieprawidłowy nick lub hasło</p>
+        </div>
     </div>
-</div>
 
-<div class="app-container" id="appContainer" style="display: none;">
-    <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header"><div class="logo-icon">X</div><div class="logo-text">Xenio</div></div>
-        <ul class="nav-menu">
-            <li class="nav-item active" data-tab="home"><i class="fas fa-chart-pie"></i> Omówienie</li>
-            <li class="nav-item" data-tab="ekipa"><i class="fas fa-users"></i> Struktura Ekipy</li>
-            <li class="nav-item" data-tab="regulamin"><i class="fas fa-gavel"></i> Regulamin</li>
-            <li class="nav-item" data-tab="taryfikator"><i class="fas fa-balance-scale"></i> Taryfikator</li>
-            <li class="nav-item" data-tab="obowiazki"><i class="fas fa-clipboard-list"></i> Instrukcja</li>
-        </ul>
-        <div class="sidebar-footer">
-            <div class="user-info">
-                <div class="status-dot" id="statusDot"></div>
+    <!-- APLIKACJA -->
+    <div class="app-container" id="appContainer">
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <div class="brand">⚡ Xen<span>io</span></div>
+            <div class="user-chip">
+                <div class="status-dot"></div>
                 <div>
-                    <p style="font-size:0.85rem; font-weight:700;" id="loggedUserDisplay"></p>
-                    <p style="font-size:0.75rem; color:var(--text-secondary);" id="loggedRoleDisplay"></p>
-                    <div class="current-status" id="currentStatusText"></div>
+                    <div class="user-name" id="loggedUserDisplay"></div>
+                    <div class="user-role" id="loggedRoleDisplay"></div>
                 </div>
             </div>
-            <div class="status-panel" id="statusPanel" style="display: none;">
-                <select id="statusType"><option value="czuwa">W czuwaniu</option><option value="pingi">Dostępny na pingi</option><option value="niedostepny">Niedostępny</option></select>
-                <input type="datetime-local" id="statusFrom">
-                <input type="datetime-local" id="statusTo">
-                <button onclick="saveStatus()">Zapisz</button>
-            </div>
-            <button onclick="toggleStatusPanel()" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 8px; color: #fff; cursor: pointer; font-size: 0.85rem;">Ustaw status</button>
         </div>
-    </aside>
 
-    <main class="main-content" id="mainContent">
-        <div id="home" class="tab-content active">
-            <div class="page-header"><h1>Główny Panel</h1></div>
-            <div class="panel-card"><h2>Witaj, <span id="welcomeUser"></span>!</h2><div class="stat-grid"><div class="stat-card"><i class="fas fa-user-friends"></i><div class="num" data-count="300">0</div><p>Aktywna Społeczność</p></div><div class="stat-card"><i class="fas fa-sync-alt"></i><div class="num">✓</div><p>Zsynchronizowany Taryfikator</p></div><div class="stat-card"><i class="fas fa-shield-alt"></i><div class="num">✓</div><p>Zabezpieczona Struktura</p></div></div></div>
-            <div class="panel-card"><h2><i class="fas fa-signal"></i> Statusy Ekipy</h2><div class="status-list" id="homeStatusList"></div></div>
+        <!-- NAWIGACJA -->
+        <div class="nav-pills" id="navPills">
+            <button class="nav-pill active" data-tab="home"><i class="fas fa-chart-pie"></i> Omówienie</button>
+            <button class="nav-pill" data-tab="ekipa"><i class="fas fa-users"></i> Ekipa</button>
+            <button class="nav-pill" data-tab="regulamin"><i class="fas fa-gavel"></i> Regulamin</button>
+            <button class="nav-pill" data-tab="taryfikator"><i class="fas fa-balance-scale"></i> Taryfikator</button>
+            <button class="nav-pill" data-tab="obowiazki"><i class="fas fa-clipboard-list"></i> Obowiązki</button>
         </div>
-        <div id="ekipa" class="tab-content">
-            <div class="page-header"><h1>Struktura Organizacyjna</h1></div>
-            <div class="section-title">Właściciel Projektu</div>
-            <div class="team-center"><div class="member-card card-kierownik"><img class="avatar" src="https://cdn.discordapp.com/avatars/711584775055343706/b6e14a83a0122dc0b22a19300936f819.webp?size=1024" alt="Xenio"><div class="member-name">Xenio</div><div class="role-badge">Kierownik / Twórca</div></div></div>
-            <div class="section-title">Wyższa Administracja</div>
+
+        <!-- HOME -->
+        <div id="home" class="tab-pane active">
+            <div class="card">
+                <h2><i class="fas fa-home"></i> Witaj, <span id="welcomeUser"></span>!</h2>
+                <div class="stats-grid">
+                    <div class="stat-box"><i class="fas fa-user-friends"></i><div class="stat-value" data-count="320">0</div><div class="stat-label">Aktywna Społeczność</div></div>
+                    <div class="stat-box"><i class="fas fa-sync-alt"></i><div class="stat-value" style="color:#2ecc71;">✓</div><div class="stat-label">Zsynchronizowany Taryfikator</div></div>
+                    <div class="stat-box"><i class="fas fa-shield-alt"></i><div class="stat-value" style="color:var(--accent);">✓</div><div class="stat-label">Zabezpieczona Struktura</div></div>
+                </div>
+            </div>
+            <div class="card">
+                <h2><i class="fas fa-signal"></i> Statusy Ekipy</h2>
+                <table class="table-status">
+                    <thead><tr><th>Członek</th><th>Ranga</th><th>Status</th></tr></thead>
+                    <tbody id="homeStatusList"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- EKIPA -->
+        <div id="ekipa" class="tab-pane">
+            <h2 style="text-align:center; margin-bottom:8px; font-size:1.8rem; font-weight:800;">Struktura Organizacyjna</h2>
+            <p style="text-align:center; color:var(--text-secondary); margin-bottom:24px;">Hierarchia zespołu Xenio</p>
+            <div class="section-label">👑 Właściciel Projektu</div>
+            <div class="flex-center"><div class="team-card kierownik"><img src="https://cdn.discordapp.com/avatars/711584775055343706/b6e14a83a0122dc0b22a19300936f819.webp?size=1024" alt="Xenio"><div class="team-name">Xenio</div><div class="team-badge badge-kierownik">Kierownik / Twórca</div></div></div>
+            <div class="section-label">🟠 Wyższa Administracja</div>
             <div class="team-grid">
-                <div class="member-card card-admin"><img class="avatar" src="https://cdn.discordapp.com/avatars/971381667107307580/f8d007a1d764bf4187ccb4384517541a.webp?size=1024" alt="Maggaistier"><div class="member-name">Maggaistier</div><div class="role-badge">Head Admin</div></div>
-                <div class="member-card card-admin"><img class="avatar" src="https://cdn.discordapp.com/avatars/1445522754836103229/621eedd0e15418f3d037d91767866e89.webp?size=1024" alt="Axyy_07"><div class="member-name">Axyy_07</div><div class="role-badge">Admin</div></div>
-                <div class="member-card card-admin"><img class="avatar" src="https://cdn.discordapp.com/avatars/786948237201375232/41786fdb725cee996971c0fda0d6fc0c.webp?size=1024" alt="Anielka"><div class="member-name">Anielka</div><div class="role-badge">Admin</div></div>
+                <div class="team-card admin"><img src="https://cdn.discordapp.com/avatars/971381667107307580/f8d007a1d764bf4187ccb4384517541a.webp?size=1024" alt="Maggaistier"><div class="team-name">Maggaistier</div><div class="team-badge badge-admin">Head Admin</div></div>
+                <div class="team-card admin"><img src="https://cdn.discordapp.com/avatars/1445522754836103229/621eedd0e15418f3d037d91767866e89.webp?size=1024" alt="Axyy_07"><div class="team-name">Axyy_07</div><div class="team-badge badge-admin">Admin</div></div>
+                <div class="team-card admin"><img src="https://cdn.discordapp.com/avatars/786948237201375232/41786fdb725cee996971c0fda0d6fc0c.webp?size=1024" alt="Anielka"><div class="team-name">Anielka</div><div class="team-badge badge-admin">Admin</div></div>
             </div>
-            <div class="section-title">Pion Moderacyjny</div>
-            <div class="team-center"><div class="member-card card-mod"><img class="avatar" src="https://cdn.discordapp.com/avatars/933668988150489088/1af3370a48b83f464caa7a88aa671553.webp?size=1024" alt="Wujaszek"><div class="member-name">Wujaszek</div><div class="role-badge">Lead Moderator</div></div></div>
-            <div class="section-title">Pion Wsparcia (Helperzy)</div>
+            <div class="section-label">🟢 Pion Moderacyjny</div>
+            <div class="flex-center"><div class="team-card mod"><img src="https://cdn.discordapp.com/avatars/933668988150489088/1af3370a48b83f464caa7a88aa671553.webp?size=1024" alt="Wujaszek"><div class="team-name">Wujaszek</div><div class="team-badge badge-mod">Lead Moderator</div></div></div>
+            <div class="section-label">🟡 Pion Wsparcia (Helperzy)</div>
             <div class="team-grid">
-                <div class="member-card card-helper"><img class="avatar" src="https://cdn.discordapp.com/avatars/1392207721629220866/00e21901bf99e5eb720fb28fd8dda390.webp?size=1024" alt="Zetinek"><div class="member-name">zetinek</div><div class="role-badge">Helper</div></div>
-                <div class="member-card card-helper"><img class="avatar" src="https://cdn.discordapp.com/avatars/1110244319463477389/b949e58f12959a1066a3a2b2acc23ef2.webp?size=1024" alt="Barti0"><div class="member-name">Barti0</div><div class="role-badge">Helper</div></div>
-                <div class="member-card card-helper"><img class="avatar" src="https://vzge.me/face/128/db4a8fd93875442ca8146c81bc80e642.png" alt="SzymqPL"><div class="member-name">szymqpl</div><div class="role-badge">Trial Helper</div></div>
+                <div class="team-card helper"><img src="https://cdn.discordapp.com/avatars/1392207721629220866/00e21901bf99e5eb720fb28fd8dda390.webp?size=1024" alt="Zetinek"><div class="team-name">zetinek</div><div class="team-badge badge-helper">Helper</div></div>
+                <div class="team-card helper"><img src="https://cdn.discordapp.com/avatars/1110244319463477389/b949e58f12959a1066a3a2b2acc23ef2.webp?size=1024" alt="Barti0"><div class="team-name">Barti0</div><div class="team-badge badge-helper">Helper</div></div>
+                <div class="team-card helper"><img src="https://vzge.me/face/128/db4a8fd93875442ca8146c81bc80e642.png" alt="SzymqPL"><div class="team-name">szymqpl</div><div class="team-badge badge-helper">Trial Helper</div></div>
             </div>
         </div>
-        <div id="regulamin" class="tab-content">
-            <div class="page-header"><h1>Regulamin Główny</h1></div>
-            <div class="standards-grid">
-                <div class="standard-card expanded"><div class="standard-header" onclick="this.parentElement.classList.toggle('expanded')"><div class="standard-icon"><i class="fas fa-shield-alt"></i></div><div class="standard-title">Zasady Ogólne (§1-§6)</div><i class="fas fa-chevron-down standard-arrow"></i></div><div class="standard-body"><ul><li><span>§1.</span> Nieznajomość regulaminu nie zwalnia z obowiązku jego przestrzegania.</li><li><span>§2.</span> Szanuj innych: zakaz rasizmu, mowy nienawiści oraz prowokowania.</li><li><span>§3.</span> Zakaz reklamowania innych serwerów bez zgody administracji.</li><li><span>§4.</span> Tickety służą do pomocy – zakaz tworzenia ich bez powodu.</li><li><span>§5.</span> Zakaz podszywania się pod członków administracji.</li><li><span>§6.</span> Bezwzględny zakaz udostępniania danych osobowych (doxing).</li></ul></div></div>
-                <div class="standard-card"><div class="standard-header" onclick="this.parentElement.classList.toggle('expanded')"><div class="standard-icon"><i class="fas fa-comment-dots"></i></div><div class="standard-title">Kanały Tekstowe (§7-§11)</div><i class="fas fa-chevron-down standard-arrow"></i></div><div class="standard-body"><ul><li><span>§7.</span> Zachowaj kulturę: ogranicz nadużywanie przekleństw.</li><li><span>§8.</span> Zakaz spamu, floodu oraz „łańcuszków”.</li><li><span>§9.</span> Zakaz nadmiernego oznaczania użytkowników.</li><li><span>§10.</span> Korzystaj z kanałów zgodnie z ich przeznaczeniem.</li><li><span>§11.</span> Ekonomia: Surowy zakaz tworzenia multikont.</li></ul></div></div>
-                <div class="standard-card"><div class="standard-header" onclick="this.parentElement.classList.toggle('expanded')"><div class="standard-icon"><i class="fas fa-microphone-alt"></i></div><div class="standard-title">Kanały Głosowe (§12-§14)</div><i class="fas fa-chevron-down standard-arrow"></i></div><div class="standard-body"><ul><li><span>§12.</span> Zakaz puszczania bindów, krzyczenia.</li><li><span>§13.</span> Streamowanie treści +18 zabronione.</li><li><span>§14.</span> Na kanałach prywatnych zasady luźniejsze.</li></ul></div></div>
+
+        <!-- REGULAMIN 500x LEPSZY -->
+        <div id="regulamin" class="tab-pane">
+            <h2 style="text-align:center; margin-bottom:8px; font-size:2rem; font-weight:800; letter-spacing:-1px;">Regulamin Główny</h2>
+            <p style="text-align:center; color:var(--text-secondary); margin-bottom:32px; font-size:1rem;">Kliknij dowolną sekcję, aby rozwinąć szczegółowe przepisy</p>
+
+            <div class="rules-grid">
+                <!-- Sekcja 1: Zasady Ogólne -->
+                <div class="rule-card open">
+                    <div class="rule-header" onclick="this.parentElement.classList.toggle('open')">
+                        <div class="icon-circle"><i class="fas fa-shield-alt"></i></div>
+                        <span class="title">Zasady Ogólne <span style="color:var(--accent); font-size:0.8rem;">(§1 – §6)</span></span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="rule-body">
+                        <div class="rules-list">
+                            <div class="rule-item"><div class="par-num">§1</div><div class="content"><strong>Nieznajomość regulaminu</strong> nie zwalnia z obowiązku jego przestrzegania.</div></div>
+                            <div class="rule-item"><div class="par-num">§2</div><div class="content"><strong>Szanuj innych:</strong> zakaz rasizmu, mowy nienawiści oraz prowokowania.</div></div>
+                            <div class="rule-item"><div class="par-num">§3</div><div class="content"><strong>Zakaz reklamowania</strong> innych serwerów bez zgody administracji.</div></div>
+                            <div class="rule-item"><div class="par-num">§4</div><div class="content"><strong>Tickety</strong> służą do pomocy – zakaz tworzenia ich bez powodu.</div></div>
+                            <div class="rule-item"><div class="par-num">§5</div><div class="content"><strong>Zakaz podszywania się</strong> pod członków administracji.</div></div>
+                            <div class="rule-item"><div class="par-num">§6</div><div class="content"><strong>Bezwzględny zakaz</strong> udostępniania danych osobowych (doxing).</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekcja 2: Kanały Tekstowe -->
+                <div class="rule-card">
+                    <div class="rule-header" onclick="this.parentElement.classList.toggle('open')">
+                        <div class="icon-circle"><i class="fas fa-comment-dots"></i></div>
+                        <span class="title">Kanały Tekstowe <span style="color:var(--neon-orange); font-size:0.8rem;">(§7 – §11)</span></span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="rule-body">
+                        <div class="rules-list">
+                            <div class="rule-item"><div class="par-num">§7</div><div class="content"><strong>Zachowaj kulturę:</strong> ogranicz nadużywanie przekleństw.</div></div>
+                            <div class="rule-item"><div class="par-num">§8</div><div class="content"><strong>Zakaz spamu, floodu</strong> oraz „łańcuszków".</div></div>
+                            <div class="rule-item"><div class="par-num">§9</div><div class="content"><strong>Zakaz nadmiernego oznaczania</strong> użytkowników.</div></div>
+                            <div class="rule-item"><div class="par-num">§10</div><div class="content"><strong>Korzystaj z kanałów</strong> zgodnie z ich przeznaczeniem.</div></div>
+                            <div class="rule-item"><div class="par-num">§11</div><div class="content"><strong>Ekonomia:</strong> surowy zakaz tworzenia multikont.</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekcja 3: Kanały Głosowe -->
+                <div class="rule-card">
+                    <div class="rule-header" onclick="this.parentElement.classList.toggle('open')">
+                        <div class="icon-circle"><i class="fas fa-microphone-alt"></i></div>
+                        <span class="title">Kanały Głosowe <span style="color:var(--neon-green); font-size:0.8rem;">(§12 – §14)</span></span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="rule-body">
+                        <div class="rules-list">
+                            <div class="rule-item"><div class="par-num">§12</div><div class="content"><strong>Zakaz puszczania bindów</strong> i krzyczenia.</div></div>
+                            <div class="rule-item"><div class="par-num">§13</div><div class="content"><strong>Streamowanie treści +18</strong> jest zabronione.</div></div>
+                            <div class="rule-item"><div class="par-num">§14</div><div class="content"><strong>Na kanałach prywatnych</strong> obowiązują luźniejsze zasady.</div></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="info-box"><p>• Administracja zastrzega sobie prawo do zmiany regulaminu.</p><p>• W sytuacjach nieujętych decyduje administracja.</p></div>
-        </div>
-        <div id="taryfikator" class="tab-content">
-            <div class="page-header"><h1>System Wymierzania Kar</h1></div>
-            <div class="panel-card"><div class="table-container"><table id="penaltyTable"><thead><tr><th>Naruszenie</th><th>1. infrakcja</th><th>2. infrakcja</th><th>Kolejne</th></tr></thead><tbody><tr><td>Spam / Flood</td><td>10 min</td><td>30 min</td><td>1h</td></tr><tr><td>Wulgaryzmy</td><td>15 min</td><td>1h</td><td>6h</td></tr><tr><td>Obraza użytkownika</td><td>30 min</td><td>3h</td><td>24h</td></tr><tr><td>Toksyczne zachowanie</td><td>1h</td><td>6h</td><td>3 dni</td></tr><tr><td>Prowokowanie</td><td>30 min</td><td>2h</td><td>12h</td></tr><tr><td>Reklamowanie</td><td class="badge-ban">BAN</td><td>-</td><td>-</td></tr><tr><td>Brak kultury wobec Admina</td><td>2h</td><td>12h</td><td>7 dni</td></tr><tr><td>Wymuszanie kary</td><td style="color:var(--rank-kierownik);">24h</td><td style="color:var(--rank-kierownik);">3 dni</td><td style="color:var(--rank-kierownik);">7 dni</td></tr></tbody></table></div></div>
-            <div class="critical-box"><p>⚠️ PROTOKÓŁ WYMUSZANIA KAR: 24h → 3 dni → 7 dni.</p></div>
-        </div>
-        <div id="obowiazki" class="tab-content">
-            <div class="page-header"><h1>Centrum Operacyjne</h1></div>
-            <div class="ob-section-title"><i class="fas fa-gem"></i> Fundamenty</div>
-            <div class="panel-card fundamenty-card"><div class="fundamenty-grid"><div class="fundament-item"><div class="fundament-num">01</div><div><strong>Sztywne kary</strong><p>Zawsze zgodnie z taryfikatorem.</p></div></div><div class="fundament-item"><div class="fundament-num">02</div><div><strong>Uprawnienia do Banowania</strong><p>Zgłaszane do Xenio.</p></div></div><div class="fundament-item"><div class="fundament-num">03</div><div><strong>Kto nadaje bany</strong><p>Wyłącznie Xenio.</p></div></div><div class="fundament-item"><div class="fundament-num">04</div><div><strong>Zasada rozwoju</strong><p>Do odwołania.</p></div></div></div></div>
-            <div class="ob-section-title"><i class="fas fa-cogs"></i> Standardy Operacyjne</div>
-            <div class="standards-grid">
-                <div class="standard-card"><div class="standard-header" onclick="this.parentElement.classList.toggle('expanded')"><div class="standard-icon"><i class="fas fa-ticket-alt"></i></div><div class="standard-title">System Ticketów</div><i class="fas fa-chevron-down standard-arrow"></i></div><div class="standard-body"><ul><li><span>Pierwsza linia:</span> Helperzy obsługują wszystkie zgłoszenia.</li><li><span>Eskalacja:</span> Admini/Moderatorzy pomagają tylko na prośbę Helpera.</li></ul></div></div>
-                <div class="standard-card"><div class="standard-header" onclick="this.parentElement.classList.toggle('expanded')"><div class="standard-icon"><i class="fas fa-microphone"></i></div><div class="standard-title">Kanały Głosowe</div><i class="fas fa-chevron-down standard-arrow"></i></div><div class="standard-body"><ul><li><span>Zakaz ingerencji:</span> Nie wchodzimy na pełne kanały bez potrzeby.</li><li><span>Zakaz przerzucania:</span> Bez zgody użytkownika.</li></ul></div></div>
-                <div class="standard-card"><div class="standard-header" onclick="this.parentElement.classList.toggle('expanded')"><div class="standard-icon"><i class="fas fa-heart"></i></div><div class="standard-title">Etyka i Postawa</div><i class="fas fa-chevron-down standard-arrow"></i></div><div class="standard-body"><ul><li><span>Bezstronność:</span> Taryfikator nadrzędny.</li><li><span>Profesjonalizm:</span> Merytoryczne wypowiedzi.</li><li><span>Użycie /mute:</span> Tylko zgodnie z taryfikatorem.</li></ul></div></div>
+
+            <div class="info-note">
+                <div><i class="fas fa-info-circle"></i> <strong>Administracja zastrzega sobie prawo do zmiany regulaminu.</strong></div>
+                <div><i class="fas fa-gavel"></i> W sytuacjach nieujętych decyzję podejmuje administracja.</div>
             </div>
-            <div class="ob-section-title"><i class="fas fa-user-shield"></i> Obowiązki według Ról</div>
-            <div class="role-switcher">
-                <button id="btnAdmin" class="role-btn active" onclick="switchRole('admin')"><i class="fas fa-crown"></i> Administrator</button>
-                <button id="btnHelper" class="role-btn" onclick="switchRole('helper')"><i class="fas fa-hands-helping"></i> Helper</button>
-            </div>
-            <div class="role-content" id="roleAdmin"><div class="panel-card role-card"><h2><i class="fas fa-star" style="color: var(--rank-admin);"></i> Zakres obowiązków Administratora</h2><div class="role-list"><div class="role-item"><span>01</span> Weryfikacja poprawności kar nakładanych przez Helperów.</div><div class="role-item"><span>02</span> Monitorowanie kanału <code>#administracja</code>.</div><div class="role-item"><span>03</span> Wstępna analiza zgłoszeń na <code>#raporty-ban</code>.</div><div class="role-item"><span>04</span> Rozpatrywanie ticketów eskalowanych.</div><div class="role-item highlight"><span>08</span> <strong>Zakaz zmiany wymiaru kar bez zgody Właściciela.</strong></div></div></div></div>
-            <div class="role-content" id="roleHelper" style="display: none;"><div class="panel-card role-card"><h2><i class="fas fa-star" style="color: var(--rank-helper);"></i> Zakres obowiązków Helpera</h2><div class="role-list"><div class="role-item"><span>01</span> Stałe monitorowanie czatu i kanałów głosowych.</div><div class="role-item"><span>02</span> Bezwzględne przestrzeganie taryfikatora.</div><div class="role-item"><span>03</span> Używanie /mute wyłącznie na <code>#administracja</code>.</div><div class="role-item"><span>04</span> Brak uprawnień do banowania.</div><div class="role-item highlight"><span>07</span> <strong>Raportowanie Administratorowi sytuacji niejasnych.</strong></div></div></div></div>
         </div>
-    </main>
-</div>
 
-<script>
-    (function() {
-        const users = {
-            "Xenio": { pass: "f23e98bnjmysdfgfre3c3", role: "kierownik" },
-            "Maggaistier": { pass: "2t98mbynsefwdo08", role: "admin" },
-            "Axyy_07": { pass: "f3r09knuhwdge4r", role: "admin" },
-            "Anielka": { pass: "gv30re435y4esdfgg345", role: "admin" },
-            "Wujaszek": { pass: "fg309rehuj0w3hjsdf", role: "mod" },
-            "Zetinek": { pass: "0v89ebhr3yg340tdf", role: "helper" },
-            "Barti0": { pass: "23wg9eumhs9d08fjds43", role: "helper" },
-            "SzymqPL": { pass: "903gmrj79jsdfhufgsd0u", role: "helper" }
-        };
-        let currentUser = null;
-        let statuses = JSON.parse(localStorage.getItem('xenioStatuses') || '{}');
+        <!-- TARYFIKATOR (bez zmian) -->
+        <div id="taryfikator" class="tab-pane">
+            <h2 style="text-align:center; margin-bottom:8px; font-size:1.8rem; font-weight:800;">System Wymierzania Kar</h2>
+            <p style="text-align:center; color:var(--text-secondary); margin-bottom:24px;">Dynamiczne karty progresji infrakcji</p>
+            <div class="tariff-container">
+                <div class="tariff-category">
+                    <div class="category-title"><i class="fas fa-comment-slash"></i> Wykroczenia Czatu</div>
+                    <div class="offense-grid">
+                        <div class="offense-item"><div class="offense-name"><span class="dot"></span> Spam / Flood</div><div class="penalty-progress"><div class="penalty-step"><span class="step-badge">10 min</span><span class="step-label">1. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">30 min</span><span class="step-label">2. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">1 godzina</span><span class="step-label">Kolejne</span></div></div></div>
+                        <div class="offense-item"><div class="offense-name"><span class="dot"></span> Wulgaryzmy</div><div class="penalty-progress"><div class="penalty-step"><span class="step-badge">15 min</span><span class="step-label">1. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">1 godzina</span><span class="step-label">2. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">6 godzin</span><span class="step-label">Kolejne</span></div></div></div>
+                        <div class="offense-item"><div class="offense-name"><span class="dot"></span> Nadmierne oznaczanie</div><div class="penalty-progress"><div class="penalty-step"><span class="step-badge">10 min</span><span class="step-label">1. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">30 min</span><span class="step-label">2. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">2 godziny</span><span class="step-label">Kolejne</span></div></div></div>
+                    </div>
+                </div>
+                <div class="tariff-category">
+                    <div class="category-title"><i class="fas fa-user-slash"></i> Wykroczenia Wobec Osób</div>
+                    <div class="offense-grid">
+                        <div class="offense-item"><div class="offense-name"><span class="dot"></span> Obraza użytkownika</div><div class="penalty-progress"><div class="penalty-step"><span class="step-badge">30 min</span><span class="step-label">1. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">3 godziny</span><span class="step-label">2. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">24 godziny</span><span class="step-label">Kolejne</span></div></div></div>
+                        <div class="offense-item"><div class="offense-name"><span class="dot"></span> Toksyczne zachowanie</div><div class="penalty-progress"><div class="penalty-step"><span class="step-badge">1 godzina</span><span class="step-label">1. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">6 godzin</span><span class="step-label">2. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">3 dni</span><span class="step-label">Kolejne</span></div></div></div>
+                        <div class="offense-item"><div class="offense-name"><span class="dot"></span> Prowokowanie</div><div class="penalty-progress"><div class="penalty-step"><span class="step-badge">30 min</span><span class="step-label">1. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">2 godziny</span><span class="step-label">2. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">12 godzin</span><span class="step-label">Kolejne</span></div></div></div>
+                        <div class="offense-item"><div class="offense-name"><span class="dot"></span> Brak kultury wobec Admina</div><div class="penalty-progress"><div class="penalty-step"><span class="step-badge severe">2 godziny</span><span class="step-label">1. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge severe">12 godzin</span><span class="step-label">2. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge severe">7 dni</span><span class="step-label">Kolejne</span></div></div></div>
+                    </div>
+                </div>
+                <div class="tariff-category">
+                    <div class="category-title"><i class="fas fa-ban"></i> Ciężkie Naruszenia</div>
+                    <div class="offense-grid">
+                        <div class="offense-item"><div class="offense-name"><span class="dot"></span> Reklamowanie</div><div class="penalty-progress"><div class="penalty-step"><span class="step-badge ban">BAN</span><span class="step-label">1. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">-</span><span class="step-label">2. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">-</span><span class="step-label">Kolejne</span></div></div></div>
+                        <div class="offense-item"><div class="offense-name"><span class="dot"></span> Wymuszanie kary</div><div class="penalty-progress"><div class="penalty-step"><span class="step-badge severe">24 godziny</span><span class="step-label">1. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge severe">3 dni</span><span class="step-label">2. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge severe">7 dni</span><span class="step-label">Kolejne</span></div></div></div>
+                        <div class="offense-item"><div class="offense-name"><span class="dot"></span> Podszywanie się</div><div class="penalty-progress"><div class="penalty-step"><span class="step-badge ban">BAN</span><span class="step-label">1. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">-</span><span class="step-label">2. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">-</span><span class="step-label">Kolejne</span></div></div></div>
+                        <div class="offense-item"><div class="offense-name"><span class="dot"></span> Doxing</div><div class="penalty-progress"><div class="penalty-step"><span class="step-badge ban">BAN</span><span class="step-label">1. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">-</span><span class="step-label">2. infrakcja</span></div><div class="step-connector"></div><div class="penalty-step"><span class="step-badge">-</span><span class="step-label">Kolejne</span></div></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="alert-box"><i class="fas fa-exclamation-triangle"></i> PROTOKÓŁ WYMUSZANIA KAR: 24h → 3 dni → 7 dni. Wymuszanie kary jest surowo zabronione.</div>
+        </div>
 
-        window.login = function() {
-            const user = document.getElementById('loginUser').value.trim();
-            const pass = document.getElementById('loginPass').value.trim();
-            if (users[user] && users[user].pass === pass) {
-                currentUser = { nick: user, role: users[user].role };
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('appContainer').style.display = 'flex';
-                document.getElementById('loggedUserDisplay').innerText = currentUser.nick;
-                document.getElementById('loggedRoleDisplay').innerText = 'Rola: ' + currentUser.role;
-                document.getElementById('welcomeUser').innerText = currentUser.nick;
-                updateStatusDisplay();
-                renderHomeStatusList();
-            } else document.getElementById('loginError').style.display = 'block';
-        };
+        <!-- OBOWIĄZKI -->
+        <div id="obowiazki" class="tab-pane">
+            <h2 style="text-align:center; margin-bottom:8px; font-size:1.8rem; font-weight:800;">Centrum Operacyjne</h2>
+            <p style="text-align:center; color:var(--text-secondary); margin-bottom:24px;">Fundamenty, standardy i zakresy obowiązków</p>
+            <h3 style="color:var(--accent); margin-bottom:14px;"><i class="fas fa-gem"></i> Fundamenty Działania</h3>
+            <div class="stats-grid" style="margin-bottom:20px;">
+                <div class="stat-box"><i class="fas fa-gavel"></i><div class="stat-label" style="font-weight:700; color:#fff; margin-top:8px;">Sztywne kary</div><div class="stat-label">Zawsze zgodnie z taryfikatorem.</div></div>
+                <div class="stat-box"><i class="fas fa-lock"></i><div class="stat-label" style="font-weight:700; color:#fff; margin-top:8px;">Uprawnienia Banowania</div><div class="stat-label">Zgłaszane wyłącznie do Xenio.</div></div>
+                <div class="stat-box"><i class="fas fa-crown"></i><div class="stat-label" style="font-weight:700; color:#fff; margin-top:8px;">Kto nadaje bany</div><div class="stat-label">Wyłącznie Xenio.</div></div>
+                <div class="stat-box"><i class="fas fa-seedling"></i><div class="stat-label" style="font-weight:700; color:#fff; margin-top:8px;">Zasada rozwoju</div><div class="stat-label">Do odwołania.</div></div>
+            </div>
+            <h3 style="color:var(--accent); margin-bottom:14px;"><i class="fas fa-cogs"></i> Standardy Operacyjne</h3>
+            <div class="ob-grid" style="margin-bottom:20px;">
+                <div class="ob-card"><h3><i class="fas fa-ticket-alt" style="color:var(--accent);"></i> System Ticketów</h3><ul class="ob-list"><li><span class="ob-num">1</span> <strong>Pierwsza linia:</strong> Helperzy obsługują wszystkie zgłoszenia.</li><li><span class="ob-num">2</span> <strong>Eskalacja:</strong> Admini/Moderatorzy pomagają tylko na prośbę Helpera.</li></ul></div>
+                <div class="ob-card"><h3><i class="fas fa-microphone" style="color:var(--accent);"></i> Kanały Głosowe</h3><ul class="ob-list"><li><span class="ob-num">1</span> <strong>Zakaz ingerencji:</strong> Nie wchodzimy na pełne kanały bez potrzeby.</li><li><span class="ob-num">2</span> <strong>Zakaz przerzucania:</strong> Bez zgody użytkownika.</li></ul></div>
+                <div class="ob-card"><h3><i class="fas fa-heart" style="color:var(--accent);"></i> Etyka i Postawa</h3><ul class="ob-list"><li><span class="ob-num">1</span> <strong>Bezstronność:</strong> Taryfikator nadrzędny.</li><li><span class="ob-num">2</span> <strong>Profesjonalizm:</strong> Merytoryczne wypowiedzi.</li><li><span class="ob-num">3</span> <strong>Użycie /mute:</strong> Tylko zgodnie z taryfikatorem.</li></ul></div>
+            </div>
+            <h3 style="color:var(--accent); margin-bottom:14px;"><i class="fas fa-user-shield"></i> Obowiązki – Administrator</h3>
+            <div class="ob-card" style="margin-bottom:16px;"><ul class="ob-list"><li><span class="ob-num">01</span> Weryfikacja poprawności kar nakładanych przez Helperów.</li><li><span class="ob-num">02</span> Stałe monitorowanie kanału <strong>#administracja</strong>.</li><li><span class="ob-num">03</span> Wstępna analiza zgłoszeń na <strong>#raporty-ban</strong>.</li><li><span class="ob-num">04</span> Rozpatrywanie ticketów eskalowanych przez Helperów.</li><li><span class="ob-num">05</span> Utrzymywanie porządku w strukturze kanałów i uprawnień.</li><li><span class="ob-num">06</span> Raportowanie poważnych incydentów bezpośrednio do Właściciela.</li><li><span class="ob-num">07</span> Wsparcie merytoryczne i mentoring dla Helperów.</li><li><span class="ob-num">08</span> <strong style="color:#e74c3c;">Zakaz zmiany wymiaru kar bez zgody Właściciela.</strong></li></ul></div>
+            <h3 style="color:var(--accent); margin-bottom:14px;"><i class="fas fa-hands-helping"></i> Obowiązki – Helper</h3>
+            <div class="ob-card"><ul class="ob-list"><li><span class="ob-num">01</span> Stałe monitorowanie czatu i kanałów głosowych.</li><li><span class="ob-num">02</span> Bezwzględne przestrzeganie taryfikatora przy nakładaniu kar.</li><li><span class="ob-num">03</span> Używanie komendy /mute wyłącznie na kanale <strong>#administracja</strong>.</li><li><span class="ob-num">04</span> Brak uprawnień do banowania użytkowników.</li><li><span class="ob-num">05</span> Aktywna i szybka pomoc w ticketach.</li><li><span class="ob-num">06</span> Eskalacja trudnych spraw do Administratora.</li><li><span class="ob-num">07</span> <strong style="color:#e74c3c;">Raportowanie Administratorowi wszystkich sytuacji niejasnych.</strong></li></ul></div>
+        </div>
+    </div>
 
-        window.toggleStatusPanel = () => document.getElementById('statusPanel').style.display = document.getElementById('statusPanel').style.display === 'none' ? 'flex' : 'none';
-        window.saveStatus = function() {
-            if (!currentUser) return;
-            const type = document.getElementById('statusType').value;
-            const from = document.getElementById('statusFrom').value;
-            const to = document.getElementById('statusTo').value;
-            statuses[currentUser.nick] = { type, from, to };
-            localStorage.setItem('xenioStatuses', JSON.stringify(statuses));
-            updateStatusDisplay();
-            renderHomeStatusList();
-            document.getElementById('statusPanel').style.display = 'none';
-        };
+    <script>
+        (function() {
+            const users = {
+                "Xenio": { pass: "f23e98bnjmysdfgfre3c3", role: "kierownik" },
+                "Maggaistier": { pass: "2t98mbynsefwdo08", role: "admin" },
+                "Axyy_07": { pass: "f3r09knuhwdge4r", role: "admin" },
+                "Anielka": { pass: "gv30re435y4esdfgg345", role: "admin" },
+                "Wujaszek": { pass: "fg309rehuj0w3hjsdf", role: "mod" },
+                "Zetinek": { pass: "0v89ebhr3yg340tdf", role: "helper" },
+                "Barti0": { pass: "23wg9eumhs9d08fjds43", role: "helper" },
+                "SzymqPL": { pass: "903gmrj79jsdfhufgsd0u", role: "helper" }
+            };
+            let currentUser = null;
 
-        function updateStatusDisplay() {
-            if (!currentUser) return;
-            const status = statuses[currentUser.nick];
-            const dot = document.getElementById('statusDot');
-            const text = document.getElementById('currentStatusText');
-            dot.className = 'status-dot';
-            if (status) {
-                const now = new Date();
-                const from = status.from ? new Date(status.from) : null;
-                const to = status.to ? new Date(status.to) : null;
-                let active = true;
-                if (from && now < from) active = false;
-                if (to && now > to) active = false;
-                if (!active) { text.innerHTML = '<span class="status-badge">Brak aktywnego</span>'; dot.classList.add('online'); }
-                else {
-                    let label = '';
-                    if (status.type === 'czuwa') { label = 'W czuwaniu'; dot.classList.add('online'); }
-                    else if (status.type === 'pingi') { label = 'Na pingi'; dot.classList.add('away'); }
-                    else { label = 'Niedostępny'; dot.classList.add('dnd'); }
-                    text.innerHTML = `<span class="status-badge ${status.type}">${label}</span>`;
+            window.login = function() {
+                const user = document.getElementById('loginUser').value.trim();
+                const pass = document.getElementById('loginPass').value.trim();
+                if (users[user] && users[user].pass === pass) {
+                    currentUser = { nick: user, role: users[user].role };
+                    document.getElementById('loginOverlay').style.display = 'none';
+                    document.getElementById('appContainer').style.display = 'block';
+                    document.getElementById('loggedUserDisplay').innerText = currentUser.nick;
+                    document.getElementById('loggedRoleDisplay').innerText = 'Ranga: ' + currentUser.role;
+                    document.getElementById('welcomeUser').innerText = currentUser.nick;
+                    renderHomeStatusList();
+                } else {
+                    document.getElementById('loginError').style.display = 'block';
                 }
-            } else { dot.classList.add('online'); text.innerHTML = '<span class="status-badge czuwa">Online</span>'; }
-        }
+            };
 
-        function renderHomeStatusList() {
-            const list = document.getElementById('homeStatusList');
-            if (!list) return;
-            list.innerHTML = Object.keys(users).map(nick => {
-                const s = statuses[nick];
-                let badgeClass = 'czuwa', label = 'Online';
-                if (s) {
-                    const now = new Date();
-                    const from = s.from ? new Date(s.from) : null;
-                    const to = s.to ? new Date(s.to) : null;
-                    let active = true;
-                    if (from && now < from) active = false;
-                    if (to && now > to) active = false;
-                    if (active) {
-                        if (s.type === 'czuwa') { badgeClass = 'czuwa'; label = 'W czuwaniu'; }
-                        else if (s.type === 'pingi') { badgeClass = 'pingi'; label = 'Na pingi'; }
-                        else { badgeClass = 'niedostepny'; label = 'Niedostępny'; }
-                    } else { badgeClass = ''; label = 'Nieaktywny'; }
-                }
-                const role = users[nick].role;
-                let color = '#fff';
-                if (role === 'kierownik') color = 'var(--rank-kierownik)';
-                else if (role === 'admin') color = 'var(--rank-admin)';
-                else if (role === 'mod') color = 'var(--rank-mod)';
-                else if (role === 'helper') color = 'var(--rank-helper)';
-                return `<div class="status-row"><div class="user"><span style="color:${color}; font-weight:700;">${nick}</span><span style="color:var(--text-secondary);">(${role})</span></div><span class="badge status-badge ${badgeClass}">${label}</span></div>`;
-            }).join('');
-        }
+            function renderHomeStatusList() {
+                const list = document.getElementById('homeStatusList');
+                if (!list) return;
+                const roleOrder = { 'kierownik': 1, 'admin': 2, 'mod': 3, 'helper': 4 };
+                const sorted = Object.keys(users).sort((a, b) => (roleOrder[users[a].role] || 5) - (roleOrder[users[b].role] || 5));
+                list.innerHTML = sorted.map(nick => {
+                    const role = users[nick].role;
+                    let color = '#fff';
+                    if (role === 'kierownik') color = 'var(--color-kierownik)';
+                    else if (role === 'admin') color = 'var(--color-admin)';
+                    else if (role === 'mod') color = 'var(--color-mod)';
+                    else if (role === 'helper') color = 'var(--color-helper)';
+                    return `<tr><td><span class="dot-online"></span><span style="color:${color}; font-weight:600;">${nick}</span></td><td style="color:var(--text-secondary);">${role}</td><td><span style="color:#2ecc71; font-weight:600;">Online</span></td></tr>`;
+                }).join('');
+            }
 
-        document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(item.dataset.tab).classList.add('active');
-            item.classList.add('active');
-            if (item.dataset.tab === 'home') renderHomeStatusList();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            if (window.innerWidth <= 1100) document.getElementById('sidebar').classList.remove('open');
-        }));
-        document.getElementById('menuToggle').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
+            const navPills = document.querySelectorAll('.nav-pill');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            navPills.forEach(pill => {
+                pill.addEventListener('click', () => {
+                    const targetTab = pill.dataset.tab;
+                    navPills.forEach(p => p.classList.remove('active'));
+                    tabPanes.forEach(pane => pane.classList.remove('active'));
+                    pill.classList.add('active');
+                    const targetPane = document.getElementById(targetTab);
+                    if (targetPane) {
+                        targetPane.classList.add('active');
+                        if (targetTab === 'home') renderHomeStatusList();
+                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
 
-        const counterEl = document.querySelector('.num[data-count]');
-        if (counterEl) {
-            let current = 0;
-            const target = +counterEl.dataset.count;
-            const inc = Math.ceil(target / 60);
-            const obs = new IntersectionObserver((e) => { if (e[0].isIntersecting) { const t = setInterval(() => { current += inc; if (current >= target) { counterEl.textContent = target + '+'; clearInterval(t); } else counterEl.textContent = current + '+'; }, 30); obs.unobserve(counterEl); } }, { threshold: 0.5 });
-            obs.observe(counterEl);
-        }
-
-        const table = document.getElementById('penaltyTable');
-        if (table) table.querySelectorAll('th').forEach((th, i) => th.addEventListener('click', () => {
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-            const asc = th.classList.contains('sorted-asc');
-            table.querySelectorAll('th').forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
-            th.classList.add(asc ? 'sorted-desc' : 'sorted-asc');
-            rows.sort((a, b) => (asc ? b : a).children[i].innerText.localeCompare(a.children[i].innerText));
-            rows.forEach(r => tbody.appendChild(r));
-        }));
-
-        window.switchRole = function(role) {
-            document.getElementById('roleAdmin').style.display = role === 'admin' ? 'block' : 'none';
-            document.getElementById('roleHelper').style.display = role === 'helper' ? 'block' : 'none';
-            document.getElementById('btnAdmin').classList.toggle('active', role === 'admin');
-            document.getElementById('btnHelper').classList.toggle('active', role === 'helper');
-        };
-    })();
-</script>
+            const counterEl = document.querySelector('.stat-value[data-count]');
+            if (counterEl) {
+                let current = 0;
+                const target = +counterEl.dataset.count;
+                const inc = Math.ceil(target / 60);
+                const obs = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        const timer = setInterval(() => {
+                            current += inc;
+                            if (current >= target) { counterEl.textContent = target + '+'; clearInterval(timer); }
+                            else counterEl.textContent = current + '+';
+                        }, 30);
+                        obs.unobserve(counterEl);
+                    }
+                }, { threshold: 0.5 });
+                obs.observe(counterEl);
+            }
+        })();
+    </script>
 </body>
 </html>
